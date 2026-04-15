@@ -1,0 +1,21 @@
+#include <stdio.h>
+#include <stdlib.h>  // for rand() and srand()
+#include <time.h>    // for time()
+
+int main() {
+    int i, n;
+
+    printf("How many random numbers do you want? ");
+    scanf("%d", &n);
+
+    // Seed the random number generator
+    srand(time(0));
+
+    printf("\nPseudo Random Numbers:\n");
+
+    for(i = 0; i < n; i++) {
+        printf("%d\n", rand());
+    }
+
+    return 0;
+}
