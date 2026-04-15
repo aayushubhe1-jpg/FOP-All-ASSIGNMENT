@@ -1,0 +1,175 @@
+#include <stdio.h>
+#include <math.h>
+
+#define MAX 10
+
+// Function to add two matrices
+void addMatrix(int a[MAX][MAX], int b[MAX][MAX], int r, int c) {
+    int sum[MAX][MAX];
+    printf("\nResult of Addition:\n");
+    for(int i=0;i<r;i++) {
+        for(int j=0;j<c;j++) {
+            sum[i][j] = a[i][j] + b[i][j];
+            printf("%d ", sum[i][j]);
+        }
+        printf("\n");
+    }
+}
+
+// Function to find saddle point
+void saddlePoint(int a[MAX][MAX], int r, int c) {
+    int found = 0;
+    for(int i=0;i<r;i++) {
+        int min = a[i][0], col = 0;
+        for(int j=1;j<c;j++) {
+            if(a[i][j] < min) {
+                min = a[i][j];
+                col = j;
+            }
+        }
+
+        int flag = 1;
+        for(int k=0;k<r;k++) {
+            if(a[k][col] > min) {
+                flag = 0;
+                break;
+            }
+        }
+
+        if(flag) {
+            printf("\nSaddle Point: %d\n", min);
+            found = 1;
+        }
+    }
+    if(!found)
+        printf("\nNo Saddle Point found\n");
+}
+
+// Function to find determinant (2x2 or 3x3)
+float determinant(int a[MAX][MAX], int n) {
+    float det = 0;
+    if(n == 2) {
+        det = a[0][0]*a[1][1] - a[0][1]*a[1][0];
+    } else if(n == 3) {
+        det = a[0][0]*(a[1][1]*a[2][2] - a[1][2]*a[2][1])
+            - a[0][1]*(a[1][0]*a[2][2] - a[1][2]*a[2][0])
+            + a[0][2]*(a[1][0]*a[2][1] - a[1][1]*a[2][0]);
+    }
+    return det;
+}
+
+// Function to find inverse (only 2x2)
+void inverseMatrix(int a[MAX][MAX], int n) {
+    if(n != 2) {
+        printf("\nInverse only implemented for 2x2 matrix.\n");
+        return;
+    }
+
+    float det = determinant(a, n);
+    if(det == 0) {
+        printf("\nInverse does not exist (determinant = 0)\n");
+        return;
+    }
+
+    printf("\nInverse Matrix:\n");
+    printf("%f %f\n", a[1][1]/det, -a[0][1]/det);
+    printf("%f %f\n", -a[1][0]/det, a[0][0]/det);
+}
+
+// Function to check magic square
+void magicSquare(int a[MAX][MAX], int n) {
+    int sum = 0, flag = 1;
+
+    // Row sum
+    for(int j=0;j<n;j++)
+        sum += a[0][j];
+
+    // Check rows
+    for(int i=1;i<n;i++) {
+        int rowSum = 0;
+        for(int j=0;j<n;j++)
+            rowSum += a[i][j];
+        if(rowSum != sum)
+            flag = 0;
+    }
+
+    // Check columns
+    for(int j=0;j<n;j++) {
+        int colSum = 0;
+        for(int i=0;i<n;i++)
+            colSum += a[i][j];
+        if(colSum != sum)
+            flag = 0;
+    }
+
+    // Diagonals
+    int d1=0,d2=0;
+    for(int i=0;i<n;i++) {
+        d1 += a[i][i];
+        d2 += a[i][n-i-1];
+    }
+
+    if(d1 != sum || d2 != sum)
+        flag = 0;
+
+    if(flag)
+        printf("\nIt is a Magic Square\n");
+    else
+        printf("\nIt is NOT a Magic Square\n");
+}
+
+// Main function
+int main() {
+    int a[MAX][MAX], b[MAX][MAX];
+    int r, c, choice, n;
+
+    printf("Enter rows and columns: ");
+    scanf("%d%d", &r, &c);
+
+    printf("Enter elements of Matrix A:\n");
+    for(int i=0;i<r;i++)
+        for(int j=0;j<c;j++)
+            scanf("%d", &a[i][j]);
+
+    printf("Enter elements of Matrix B:\n");
+    for(int i=0;i<r;i++)
+        for(int j=0;j<c;j++)
+            scanf("%d", &b[i][j]);
+
+    do {
+        printf("\n--- MENU ---");
+        printf("\n1. Addition of two matrices");
+        printf("\n2. Saddle point of matrix A");
+        printf("\n3. Inverse of matrix A");
+        printf("\n4. Magic square check (matrix A)");
+        printf("\nEnter choice: ");
+        scanf("%d", &choice);
+
+        switch(choice) {
+            case 1:
+                addMatrix(a, b, r, c);
+                break;
+
+            case 2:
+                saddlePoint(a, r, c);
+                break;
+
+            case 3:
+                printf("Enter order (2 or 3): ");
+                scanf("%d", &n);
+                inverseMatrix(a, n);
+                break;
+
+            case 4:
+                printf("Enter order of square matrix: ");
+                scanf("%d", &n);
+                magicSquare(a, n);
+                break;
+
+            default:
+                printf("Invalid choice!");
+        }
+    } while(choice != 5);
+
+    return 0;
+}
